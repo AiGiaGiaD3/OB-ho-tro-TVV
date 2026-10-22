@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#FFFFFF">
+<title>Hệ thống hỗ trợ của tôi · PRU Khởi đầu sự nghiệp</title>
+<style>
+:root{
+  --red:#ED1B2E;--red-d:#C8102E;--red-50:#FFF1F2;--red-100:#FDE3E6;
+  --ink:#1F2328;--ink-2:#373A36;--grey:#68737A;--grey-2:#8A939B;--line:#ECEEF0;
+  --bg:#F6F7F9;--card:#FFFFFF;--ok:#12A150;--ok-50:#E9F8EF;--amber:#B26A00;--amber-50:#FFF6E5;
+  --r:20px;--r-sm:14px;
+  --sh-1:0 1px 2px rgba(16,24,40,.04),0 1px 3px rgba(16,24,40,.06);
+  --sh-2:0 2px 4px rgba(16,24,40,.04),0 12px 32px rgba(16,24,40,.08);
+  --ease:cubic-bezier(.22,1,.36,1);--spring:cubic-bezier(.34,1.56,.64,1);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html{scroll-behavior:smooth}
+body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI Variable","Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;min-height:100vh;padding-bottom:calc(110px + env(safe-area-inset-bottom))}
+button{font:inherit;border:0;cursor:pointer;background:none;color:inherit}
+input{font:inherit;color:inherit}
+a{color:inherit;text-decoration:none}
+svg.i{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}
+
+/* ---------- Top bar ---------- */
+.bar{position:sticky;top:0;z-index:40;background:rgba(255,255,255,.82);backdrop-filter:saturate(180%) blur(18px);-webkit-backdrop-filter:saturate(180%) blur(18px);border-bottom:1px solid rgba(0,0,0,.06)}
+.bar-in{max-width:1120px;margin:auto;display:flex;align-items:center;gap:12px;padding:12px 20px}
+.logo{font-weight:800;font-size:13px;letter-spacing:.4px;color:var(--ink-2)}.logo b{color:var(--red)}
+.bar .sp{flex:1}
+.sync{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--grey);padding:5px 10px;border-radius:30px;background:#F2F3F5;transition:all .3s}
+.sync i{width:7px;height:7px;border-radius:50%;background:#C5CBD0;transition:background .3s}
+.sync.on{background:var(--ok-50);color:var(--ok)}.sync.on i{background:var(--ok)}
+.mini{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:600;color:var(--grey)}
+.mini .track{width:90px;height:6px;border-radius:6px;background:#ECEEF0;overflow:hidden}
+.mini .fill{height:100%;width:0;background:var(--red);border-radius:6px;transition:width .7s var(--ease),background .4s}
+
+.wrap{max-width:1120px;margin:auto;padding:24px 20px}
+
+/* ---------- Hero ---------- */
+.hero{position:relative;overflow:hidden;background:var(--card);border-radius:24px;box-shadow:var(--sh-1);padding:26px 28px;display:grid;grid-template-columns:1fr auto;gap:24px;align-items:center}
+.hero::before{content:"";position:absolute;right:-120px;top:-140px;width:360px;height:360px;border-radius:50%;background:radial-gradient(circle,rgba(237,27,46,.10),rgba(237,27,46,0) 70%)}
+.eyebrow{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.eyebrow span{color:var(--red);font-weight:700;font-size:12px;letter-spacing:1.2px;text-transform:uppercase}
+.pill-90{background:var(--red);color:#fff;font-weight:700;font-size:12px;padding:5px 12px;border-radius:30px;box-shadow:0 4px 12px rgba(237,27,46,.3)}
+h1{font-size:clamp(28px,4.6vw,44px);line-height:1.08;letter-spacing:-.025em;font-weight:750;margin:10px 0 8px;color:var(--ink)}
+h1 em{font-style:normal;color:var(--red)}
+.lead{color:var(--grey);font-size:15px;line-height:1.55;max-width:560px}
+.lead b{color:var(--ink-2)}
+.ring{position:relative;width:132px;height:132px;flex:none}
+.ring svg{transform:rotate(-90deg);width:100%;height:100%}
+.ring circle{fill:none;stroke-width:11;stroke-linecap:round}
+.ring .bgc{stroke:#F0F1F3}.ring .fg{stroke:var(--red);transition:stroke-dashoffset .9s var(--ease),stroke .4s}
+.ring .lbl{position:absolute;inset:0;display:grid;place-content:center;text-align:center}
+.ring .lbl b{font-size:32px;letter-spacing:-.03em;line-height:1}
+.ring .lbl b small{font-size:16px;color:var(--grey-2);font-weight:600}
+.ring .lbl span{font-size:11px;color:var(--grey);margin-top:4px;font-weight:600;text-transform:uppercase;letter-spacing:.5px}
+.ring.bump{animation:bump .6s var(--spring)}
+@keyframes bump{40%{transform:scale(1.08)}}
+
+/* ---------- Smart nudge ---------- */
+.nudge{margin-top:16px;display:flex;align-items:center;gap:14px;padding:14px 14px 14px 16px;border-radius:18px;background:linear-gradient(100deg,#ED1B2E,#D3132A);color:#fff;box-shadow:0 10px 30px rgba(237,27,46,.25);position:relative;overflow:hidden}
+.nudge::after{content:"";position:absolute;inset:0;background:linear-gradient(110deg,transparent 30%,rgba(255,255,255,.18) 50%,transparent 70%);transform:translateX(-100%);animation:sheen 3.8s ease-in-out infinite}
+@keyframes sheen{60%,100%{transform:translateX(100%)}}
+.nudge .em{width:42px;height:42px;border-radius:12px;background:rgba(255,255,255,.18);display:grid;place-items:center;font-size:22px;flex:none}
+.nudge .tx{flex:1;min-width:0}
+.nudge .tx small{display:block;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;opacity:.8}
+.nudge .tx p{font-size:15px;font-weight:600;line-height:1.35;margin-top:2px}
+.nudge .go{position:relative;z-index:1;background:#fff;color:var(--red);font-weight:700;font-size:14px;padding:10px 16px;border-radius:12px;display:inline-flex;align-items:center;gap:6px;white-space:nowrap;transition:transform .15s}
+.nudge .go:active{transform:scale(.95)}
+.nudge.swap{animation:swap .5s var(--ease)}
+@keyframes swap{from{opacity:.2;transform:translateY(6px)}}
+.nudge.done{background:linear-gradient(100deg,#12A150,#0E8A44);box-shadow:0 10px 30px rgba(18,161,80,.25)}
+.nudge.done .go{color:var(--ok)}
+
+/* ---------- Layout ---------- */
+.grid{display:grid;grid-template-columns:1.55fr 1fr;gap:20px;margin-top:20px;align-items:start}
+.panel{background:var(--card);border-radius:var(--r);box-shadow:var(--sh-1);padding:22px}
+.ph{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin-bottom:16px}
+.ph h2{font-size:18px;letter-spacing:-.01em}
+.ph p{color:var(--grey);font-size:13px;margin-top:3px}
+.side{display:flex;flex-direction:column;gap:20px;position:sticky;top:76px}
+
+/* Profile */
+.profile{display:grid;grid-template-columns:1.5fr 1fr;gap:10px;margin-bottom:22px}
+.field{position:relative;background:#F4F5F7;border-radius:var(--r-sm);padding:9px 14px 10px;border:1.5px solid transparent;transition:border-color .2s,background .2s,box-shadow .2s}
+.field:focus-within{background:#fff;border-color:var(--red);box-shadow:0 0 0 4px rgba(237,27,46,.10)}
+.field label{display:block;font-size:10.5px;color:var(--grey);font-weight:700;text-transform:uppercase;letter-spacing:.6px}
+.field input{width:100%;border:0;background:transparent;outline:0;font-size:16px;padding-top:3px}
+.field input::placeholder{color:#B3B9BE}
+.field.bad{border-color:#F5A3AB;background:#FFF7F8}
+.field .ok{position:absolute;right:12px;top:50%;transform:translateY(-50%) scale(0);width:20px;height:20px;border-radius:50%;background:var(--ok);display:grid;place-items:center;transition:transform .35s var(--spring)}
+.field .ok svg{width:12px;height:12px;stroke:#fff;stroke-width:3;fill:none}
+.field.good .ok{transform:translateY(-50%) scale(1)}
+
+/* Contact cards */
+.list{display:flex;flex-direction:column;gap:12px}
+.c{position:relative;border:1.5px solid var(--line);border-radius:18px;background:#fff;padding:16px;transition:border-color .3s,box-shadow .3s,transform .3s var(--ease),background .3s}
+.c::before{content:"";position:absolute;left:-1.5px;top:16px;bottom:16px;width:4px;border-radius:0 4px 4px 0;background:var(--red);opacity:.0;transition:opacity .3s}
+.c.next{border-color:rgba(237,27,46,.45);box-shadow:0 0 0 4px rgba(237,27,46,.07),var(--sh-2)}
+.c.next::before{opacity:1}
+.c.done{background:linear-gradient(180deg,#fff,#FBFEFC);border-color:#CDEBD8}
+.c.ask{border-color:#F3D9A6;background:#FFFCF5}
+.c-h{display:flex;align-items:center;gap:14px}
+.ic{width:46px;height:46px;border-radius:14px;display:grid;place-items:center;background:var(--red-50);flex:none;transition:background .35s,transform .35s var(--spring)}
+.ic svg{width:24px;height:24px;stroke:var(--red);fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;transition:stroke .3s}
+.c.done .ic{background:var(--red);transform:rotate(-4deg)}.c.done .ic svg{stroke:#fff}
+.c-t{flex:1;min-width:0}
+.c-t b{font-size:16px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;letter-spacing:-.01em}
+.c-t span{display:block;font-size:13px;color:var(--grey);margin-top:2px}
+.tag{font-size:10px;font-weight:800;letter-spacing:.6px;padding:3px 8px;border-radius:20px;text-transform:uppercase}
+.tag.req{color:var(--red);background:var(--red-50)}
+.tag.nx{color:#fff;background:var(--red);animation:pulse 1.8s infinite}
+.tag.ak{color:var(--amber);background:var(--amber-50)}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(237,27,46,.45)}70%{box-shadow:0 0 0 8px rgba(237,27,46,0)}100%{box-shadow:0 0 0 0 rgba(237,27,46,0)}}
+.st{width:26px;height:26px;border-radius:50%;border:2px solid #D7DBDF;display:grid;place-items:center;flex:none;transition:all .4s var(--spring)}
+.st svg{width:14px;height:14px;stroke:#fff;stroke-width:3;fill:none;stroke-dasharray:24;stroke-dashoffset:24;transition:stroke-dashoffset .4s .1s var(--ease)}
+.c.done .st{background:var(--ok);border-color:var(--ok);transform:scale(1.08)}
+.c.done .st svg{stroke-dashoffset:0}
+.c-in{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+.err{grid-column:1/-1;font-size:12px;color:var(--red);display:none}
+.err.on{display:block}
+.acts{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.chip{display:inline-flex;align-items:center;gap:6px;padding:8px 13px;border-radius:30px;font-size:13px;font-weight:600;background:#F2F3F5;color:var(--ink-2);transition:transform .15s,background .2s,opacity .25s,color .2s}
+.chip:hover{background:#E9EBEE}
+.chip:active{transform:scale(.94)}
+.chip svg.i{width:15px;height:15px}
+.chip.red{background:var(--red);color:#fff}.chip.red:hover{background:var(--red-d)}
+.chip.zl{background:#E8F1FF;color:#0068FF}.chip.zl:hover{background:#DCE9FF}
+.chip.ask{background:var(--amber-50);color:var(--amber)}
+.chip.ask.on{background:var(--amber);color:#fff}
+.chip.ghost{background:transparent;color:var(--grey-2)}
+.chip[aria-disabled="true"]{opacity:.35;pointer-events:none}
+.acts .sp{flex:1}
+
+/* Steps */
+.steps{list-style:none;display:flex;flex-direction:column;gap:10px}
+.step{display:flex;gap:12px;align-items:flex-start;padding:13px;border-radius:14px;background:#F7F8FA;transition:background .35s;border:1.5px solid transparent}
+.step.cur{background:#fff;border-color:rgba(237,27,46,.3)}
+.step .n{width:28px;height:28px;border-radius:50%;background:#fff;border:2px solid var(--red);color:var(--red);font-weight:800;font-size:13px;display:grid;place-items:center;flex:none;transition:all .4s var(--spring)}
+.step.ok{background:var(--ok-50)}.step.ok .n{background:var(--ok);border-color:var(--ok);color:#fff;transform:scale(1.05)}
+.step .bd{flex:1;min-width:0}
+.step p{font-size:14px;line-height:1.45;color:var(--ink-2)}
+.step p b{color:var(--red)}
+.step.ok p{color:#2C5E40}.step.ok p b{color:var(--ok)}
+.subs{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.sub{font-size:11.5px;font-weight:600;padding:4px 9px;border-radius:20px;background:#fff;border:1px solid var(--line);color:var(--grey);display:inline-flex;align-items:center;gap:4px;transition:all .3s}
+.sub.tick{cursor:pointer;border-style:dashed;border-color:#F5A3AB;color:var(--red)}.sub.tick:active{transform:scale(.94)}
+.sub.ok{background:var(--ok);border-color:var(--ok);color:#fff}
+
+/* Ask list */
+.askp{background:var(--amber-50);border:1.5px solid #F3D9A6;box-shadow:none}
+.askp h2{color:#7A4A00}
+.asklist{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0 14px}
+.asklist span{background:#fff;border:1px solid #F0D29A;color:var(--amber);font-weight:700;font-size:12.5px;padding:5px 11px;border-radius:20px}
+
+/* Badges */
+.badges{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.bd-i{text-align:center;padding:12px 4px 10px;border-radius:14px;background:#F7F8FA;transition:all .4s var(--ease);filter:grayscale(1);opacity:.55}
+.bd-i .e{font-size:24px;display:block;transition:transform .5s var(--spring)}
+.bd-i small{display:block;font-size:10.5px;font-weight:700;color:var(--grey);margin-top:5px;line-height:1.25}
+.bd-i.on{filter:none;opacity:1;background:var(--red-50)}
+.bd-i.on .e{transform:scale(1.15)}
+.bd-i.on small{color:var(--red)}
+
+/* Buttons */
+.btn{width:100%;display:flex;align-items:center;justify-content:center;gap:8px;padding:14px;border-radius:14px;font-weight:700;font-size:15px;transition:transform .15s,box-shadow .2s,background .2s}
+.btn:active{transform:scale(.97)}
+.btn.p{background:var(--red);color:#fff;box-shadow:0 8px 20px rgba(237,27,46,.28)}
+.btn.p:hover{background:var(--red-d)}
+.btn.s{background:#F2F3F5;color:var(--ink-2)}.btn.s:hover{background:#E9EBEE}
+.btn.t{background:transparent;color:var(--grey-2);font-weight:600;font-size:13px;padding:10px}
+.btn.am{background:var(--amber);color:#fff}
+.btn+.btn{margin-top:10px}
+.foot{display:flex;justify-content:space-between;align-items:center;margin-top:26px;color:var(--grey-2);font-size:12px}
+.foot b{color:var(--red);font-weight:800;letter-spacing:.5px}.foot b span{color:var(--ink-2)}
+
+/* Dock (mobile) */
+.dock{will-change:transform;position:fixed;left:50%;bottom:calc(14px + env(safe-area-inset-bottom));transform:translateX(-50%);z-index:30;display:none;gap:8px;padding:8px;border-radius:22px;
+  background:rgba(255,255,255,.88);backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px);box-shadow:0 12px 40px rgba(16,24,40,.18);width:calc(100% - 28px);max-width:460px}
+.dock .btn{margin:0;padding:13px 10px;font-size:14px}
+.dock .btn.s{flex:0 0 auto;width:auto;padding:13px 16px}
+
+/* Toast */
+.toast{position:fixed;top:72px;left:50%;transform:translate(-50%,-16px) scale(.96);opacity:0;z-index:80;background:rgba(31,35,40,.95);color:#fff;
+  padding:11px 16px;border-radius:14px;font-size:14px;font-weight:500;transition:all .4s var(--ease);pointer-events:none;display:flex;align-items:center;gap:12px;max-width:calc(100% - 32px)}
+.toast.show{opacity:1;transform:translate(-50%,0) scale(1);pointer-events:auto}
+.toast button{color:#FF8A95;font-weight:700}
+
+/* Modal / sheet */
+.ov{position:fixed;inset:0;background:rgba(16,24,40,.42);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);z-index:60;display:grid;place-items:center;padding:20px;opacity:0;pointer-events:none;transition:opacity .3s}
+.ov.show{opacity:1;pointer-events:auto}
+.md{background:#fff;border-radius:26px;max-width:440px;width:100%;padding:24px;transform:scale(.94) translateY(24px);transition:transform .5s var(--spring);max-height:92vh;overflow:auto}
+.ov.show .md{transform:none}
+.md img{width:100%;border-radius:14px;border:1px solid var(--line);margin:14px 0;box-shadow:var(--sh-2)}
+.md h3{font-size:21px;letter-spacing:-.02em}
+.md p{color:var(--grey);font-size:14px;margin-top:6px;line-height:1.5}
+.md .row{display:flex;gap:10px}.md .row .btn{margin:0}
+.md textarea{width:100%;margin-top:12px;border:1.5px solid var(--line);border-radius:14px;padding:12px;font:inherit;font-size:14px;resize:none;min-height:120px;outline:0;color:var(--ink-2)}
+.md textarea:focus{border-color:var(--red)}
+.celebrate{text-align:center}
+.celebrate .big{font-size:64px;display:block;animation:pop .8s var(--spring)}
+@keyframes pop{0%{transform:scale(0) rotate(-25deg)}100%{transform:scale(1)}}
+
+.shake{animation:sh .45s}
+@keyframes sh{20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}
+.fade{animation:fd .7s var(--ease) both}
+@keyframes fd{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+canvas.conf{position:fixed;inset:0;pointer-events:none;z-index:90}
+
+@media(max-width:900px){
+  .grid{grid-template-columns:1fr}.side{position:static}
+  .dock{display:flex}.desk{display:none}
+}
+@media(max-width:560px){
+  .wrap{padding:16px 14px}
+  .hero{padding:20px;grid-template-columns:1fr;gap:16px}
+  .ring{position:absolute;right:18px;top:18px;width:84px;height:84px}
+  .ring .lbl b{font-size:22px}.ring .lbl b small{font-size:12px}.ring .lbl span{font-size:9px}
+  .hero .txt{padding-right:90px}
+  h1{font-size:28px}
+  .profile,.c-in{grid-template-columns:1fr}
+  .panel{padding:18px}
+  .nudge{flex-wrap:wrap}.nudge .go{width:100%;justify-content:center}
+  .mini .track{width:56px}
+  .badges{grid-template-columns:repeat(2,1fr)}
+}
+
+/* ===== Responsive & device optimisation ===== */
+.bar-in{padding-left:max(20px,env(safe-area-inset-left));padding-right:max(20px,env(safe-area-inset-right))}
+:focus-visible{outline:3px solid rgba(237,27,46,.45);outline-offset:2px;border-radius:10px}
+.field input[type=date]{min-height:24px;-webkit-appearance:none;appearance:none}
+/* Touch devices: 44px tap targets */
+@media(pointer:coarse){
+  .chip{min-height:42px;padding:10px 14px;font-size:14px}
+  .btn{min-height:50px}
+  .nudge .go{min-height:44px}
+  .toast button{padding:6px 4px}
+}
+/* Laptop / large screens */
+@media(min-width:1280px){.wrap,.bar-in{max-width:1200px}}
+@media(min-width:901px){
+  .side{max-height:calc(100vh - 96px);overflow:auto;scrollbar-width:none}
+  .side::-webkit-scrollbar{display:none}
+  body{padding-bottom:40px}
+}
+/* Tablet */
+@media(max-width:900px){
+  .side{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .side>.askp{grid-column:1/-1}
+}
+/* Phone */
+@media(max-width:640px){
+  .side{display:flex}
+  .sync span{display:none}.sync{padding:6px}
+  .bar-in{gap:10px;padding-top:10px;padding-bottom:10px}
+  .logo{font-size:12px}
+  .c{padding:14px}
+  .ic{width:42px;height:42px}
+  .acts{gap:6px}
+  .acts .sp{flex-basis:100%;height:0}
+  .acts [data-x=call],.acts [data-x=zalo],.acts [data-x=copy]{flex:1;justify-content:center}
+  .acts [data-x=ask]{flex:1;justify-content:center}
+  .ph{margin-bottom:12px}
+  .c.done .acts .sp{display:none}
+  .acts [data-x=copy]{flex:0 0 auto!important;font-size:0;gap:0;padding:10px 13px}
+  .acts [data-x=copy] svg{width:17px;height:17px}
+  .c.done .acts [data-x=clear]{flex:0 0 auto}
+  .hero .txt{padding-right:84px}
+  /* Bottom sheet modal */
+  .ov{place-items:end center;padding:0}
+  .md{max-width:none;border-radius:24px 24px 0 0;padding:14px 20px calc(20px + env(safe-area-inset-bottom));transform:translateY(100%);max-height:90vh}
+  .md::before{content:"";display:block;width:40px;height:5px;border-radius:5px;background:#D7DBDF;margin:0 auto 14px}
+  .ov.show .md{transform:none}
+  .toast{top:auto;bottom:calc(92px + env(safe-area-inset-bottom));transform:translate(-50%,16px) scale(.96)}
+  .toast.show{transform:translate(-50%,0) scale(1)}
+  .foot{flex-direction:column;gap:6px;text-align:center}
+}
+@media(max-width:360px){
+  .mini{display:none}
+  .profile{gap:8px}
+  h1{font-size:25px}
+}
+/* Phone landscape / short screens */
+@media(max-height:500px) and (orientation:landscape){
+  .dock{bottom:8px;max-width:520px}
+  .hero{padding:16px 20px}
+  .md{max-height:96vh}
+}
+/* Hide dock while typing on phone (keyboard open) */
+body.typing .dock{transform:translate(-50%,140%);opacity:0;pointer-events:none}
+.dock{transition:transform .35s var(--ease),opacity .25s}
+
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<header class="bar"><div class="bar-in">
+  <div class="logo"><b>PRU</b> KHỞI ĐẦU SỰ NGHIỆP</div>
+  <div class="sp"></div>
+  <div class="mini" aria-hidden="true"><span id="miniTxt">0%</span><div class="track"><div class="fill" id="miniFill"></div></div></div>
+  <div class="sync" id="sync"><i></i><span>Tự động lưu</span></div>
+</div></header>
+
+<main class="wrap">
+  <!-- HERO -->
+  <section class="hero fade">
+    <div class="txt">
+      <div class="eyebrow"><span>Thẻ liên hệ cá nhân</span><em class="pill-90" style="font-style:normal">90 ngày đầu</em></div>
+      <h1>Hệ thống hỗ trợ <em>của tôi</em></h1>
+      <p class="lead">Ghi <b>tên người thật</b> và <b>số liên lạc cụ thể</b>, không chỉ chức danh.<br>Tối thiểu cần có <b>MOA</b> và <b>ADM</b>.</p>
+    </div>
+    <div class="ring" id="ringBox" aria-label="Tiến độ">
+      <svg viewBox="0 0 120 120"><circle class="bgc" cx="60" cy="60" r="50"/><circle class="fg" id="ring" cx="60" cy="60" r="50" stroke-dasharray="314.16" stroke-dashoffset="314.16"/></svg>
+      <div class="lbl"><b id="pct">0<small>/4</small></b><span>đầu mối</span></div>
+    </div>
+  </section>
+
+  <!-- SMART NUDGE -->
+  <section class="nudge fade" id="nudge" style="animation-delay:.06s">
+    <div class="em" id="nEm">👋</div>
+    <div class="tx"><small id="nLb">Việc tiếp theo</small><p id="nTx">Bắt đầu nào!</p></div>
+    <button class="go" id="nGo">Bắt đầu <svg class="i" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+  </section>
+
+  <div class="grid">
+    <!-- CONTACTS -->
+    <section class="panel fade" style="animation-delay:.12s">
+      <div class="profile">
+        <div class="field" id="fHv"><label for="hv">Tên tôi</label><input id="hv" placeholder="Nhập họ tên của bạn" autocomplete="name"><span class="ok"><svg viewBox="0 0 24 24"><path d="M5 12l5 5 9-10"/></svg></span></div>
+        <div class="field"><label for="dt">Ngày nhận</label><input id="dt" type="date"></div>
+      </div>
+      <div class="ph">
+        <div><h2>Đầu mối hỗ trợ</h2><p>Điền họ tên và số Điện thoại / Zalo của từng đầu mối.</p></div>
+      </div>
+      <div class="list" id="list"></div>
+    </section>
+
+    <!-- SIDE -->
+    <aside class="side">
+      <section class="panel askp fade" id="askPanel" style="display:none">
+        <h2>🙋 Cần hỏi thêm</h2>
+        <p style="color:#7A4A00;font-size:13px;margin-top:3px">Hỏi ADM / Quản lý trực tiếp hoặc giảng viên ngay tại lớp.</p>
+        <div class="asklist" id="askList"></div>
+        <button class="btn am" data-a="askmsg"><svg class="i" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>Soạn tin nhờ hỗ trợ</button>
+      </section>
+
+      <section class="panel fade" style="animation-delay:.18s">
+        <div class="ph" style="margin-bottom:12px"><div><h2>Đề xuất hành động</h2><p>Hoàn thành 3 bước để kết thúc hoạt động.</p></div></div>
+        <ol class="steps">
+          <li class="step" id="s1"><span class="n">1</span><div class="bd"><p>Bổ sung đầy đủ thông tin còn thiếu – <b>hỏi ADM / Quản lý trực tiếp</b>.</p><div class="subs" id="s1s"></div></div></li>
+          <li class="step" id="s2"><span class="n">2</span><div class="bd"><p>Lưu các số liên hệ trên vào <b>danh bạ điện thoại</b> và <b>chụp ảnh phiếu</b> để mang theo.</p>
+            <div class="subs"><button class="sub tick" id="s2a" data-a="vcf">📇 Đã lưu danh bạ</button><span class="sub" id="s2b">🖼️ Ảnh phiếu</span></div></div></li>
+          <li class="step" id="s3"><span class="n">3</span><div class="bd"><p>Chủ động liên hệ đúng đầu mối khi cần hỗ trợ, <b>bắt đầu từ MOA và ADM</b>.</p>
+            <div class="subs"><span class="sub" id="s3a">MOA</span><span class="sub" id="s3b">ADM</span></div></div></li>
+        </ol>
+      </section>
+
+      <section class="panel fade" style="animation-delay:.22s">
+        <div class="ph" style="margin-bottom:12px"><div><h2>Cột mốc</h2><p>Mở khoá từng huy hiệu khi bạn hành động.</p></div></div>
+        <div class="badges">
+          <div class="bd-i" id="b1"><span class="e">🤝</span><small>Có MOA<br>& ADM</small></div>
+          <div class="bd-i" id="b2"><span class="e">🧭</span><small>Đủ 4<br>đầu mối</small></div>
+          <div class="bd-i" id="b3"><span class="e">📲</span><small>Đã lưu<br>& chụp phiếu</small></div>
+          <div class="bd-i" id="b4"><span class="e">🚀</span><small>Đã kết nối<br>MOA & ADM</small></div>
+        </div>
+      </section>
+
+      <section class="panel desk fade" style="animation-delay:.26s">
+        <button class="btn p" data-a="img"><svg class="i" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>Tạo ảnh phiếu</button>
+        <button class="btn t" data-a="reset">Làm lại từ đầu</button>
+      </section>
+    </aside>
+  </div>
+
+  <div class="foot"><span>Tài liệu huấn luyện, lưu hành nội bộ</span><b>TIN<span> ĐỂ YÊU</span></b></div>
+</main>
+
+<nav class="dock">
+  <button class="btn p" data-a="img"><svg class="i" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>Ảnh phiếu</button>
+  <button class="btn s" data-a="reset" aria-label="Làm lại"><svg class="i" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg></button>
+</nav>
+
+<div class="toast" id="toast"><span id="toastTx"></span><button id="toastBtn" style="display:none">Hoàn tác</button></div>
+<div class="ov" id="ov"><div class="md" id="md"></div></div>
+
+<script>
+/* ---------- Storage (safe) ---------- */
+const storage=(()=>{try{const k='__t';localStorage.setItem(k,1);localStorage.removeItem(k);return localStorage}catch(_){const m={};return{getItem:k=>k in m?m[k]:null,setItem:(k,v)=>{m[k]=String(v)},removeItem:k=>{delete m[k]}}}})();
+
+/* ---------- Content (theo Handout 2) ---------- */
+const IC={
+ gad:'<path d="M3 21h18M5 21V8l7-5 7 5v13"/><path d="M9 21v-5h6v5M9 11h.01M15 11h.01"/>',
+ moa:'<circle cx="12" cy="7" r="4"/><path d="M5 21v-2a5 5 0 0 1 5-5h4a5 5 0 0 1 5 5v2"/><path d="M12 14l-1.5 3 1.5 1.5 1.5-1.5z"/>',
+ adm:'<rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M7 15l3-3 2.5 2.5L17 10"/>',
+ hl:'<path d="M22 10L12 5 2 10l10 5 10-5z"/><path d="M6 12v5c3 2 9 2 12 0v-5"/><path d="M22 10v6"/>'
+};
+const ROLES=[
+ {k:'gad',t:'GAD',d:'Giám đốc Tổng Đại lý'},
+ {k:'moa',t:'MOA',d:'Quản lý Tư vấn viên',req:1},
+ {k:'adm',t:'ADM',d:'Phát triển kinh doanh',req:1},
+ {k:'hl', t:'Phòng Huấn luyện',d:'Lộ trình Huấn luyện'}
+];
+const N=ROLES.length;
+const KEY='pru_htht_v2';
+
+/* migrate từ v1 nếu có */
+let S=JSON.parse(storage.getItem(KEY)||'null');
+if(!S){const o=JSON.parse(storage.getItem('pru_htht_v1')||'{}');S={hv:o.hv||'',dt:o.dt||'',c:{}};
+  ['gad','moa','adm','hl'].forEach(k=>{if(o.c&&o.c[k])S.c[k]={n:o.c[k].n||'',p:o.c[k].p||''}})}
+S.c=S.c||{};S.cel=S.cel||{};S.called=S.called||{};
+
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??'').replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));
+const digits=p=>(p||'').replace(/[^\d+]/g,'');
+const validPhone=p=>/^(\+?84|0)\d{8,10}$/.test(digits(p));
+const isDone=k=>{const c=S.c[k]||{};return (c.n||'').trim().length>1&&validPhone(c.p)};
+const zaloNum=p=>digits(p).replace(/^\+?84/,'0');
+const vib=ms=>{try{navigator.vibrate&&navigator.vibrate(ms)}catch(_){}};
+
+function save(){storage.setItem(KEY,JSON.stringify(S));const e=$('#sync');e.classList.add('on');e.querySelector('span').textContent='Đã lưu';
+  clearTimeout(save.t);save.t=setTimeout(()=>{e.classList.remove('on');e.querySelector('span').textContent='Tự động lưu'},1300)}
+function toast(m,undo){$('#toastTx').textContent=m;const b=$('#toastBtn');b.style.display=undo?'':'none';b.onclick=()=>{undo&&undo();$('#toast').classList.remove('show')};
+  $('#toast').classList.add('show');clearTimeout(toast.t);toast.t=setTimeout(()=>$('#toast').classList.remove('show'),undo?4500:2300)}
+
+/* ---------- Render ---------- */
+function nextKey(){
+  for(const k of ['moa','adm']) if(!isDone(k)&&!(S.c[k]||{}).ask) return k;
+  for(const r of ROLES) if(!isDone(r.k)&&!(S.c[r.k]||{}).ask) return r.k;
+  return null;
+}
+function render(){
+  const L=$('#list');L.innerHTML='';
+  ROLES.forEach(r=>{
+    const c=S.c[r.k]||{},el=document.createElement('div');
+    el.className='c';el.dataset.k=r.k;
+    el.innerHTML=`<div class="c-h">
+      <span class="ic"><svg viewBox="0 0 24 24">${IC[r.k]}</svg></span>
+      <span class="c-t"><b>${r.t} <span class="tag nx" style="display:none">Tiếp theo</span><span class="tag ak" style="display:none">Cần hỏi</span></b><span>${r.d}</span></span>
+      <span class="st"><svg viewBox="0 0 24 24"><path d="M5 12l5 5 9-10"/></svg></span></div>
+     <div class="c-in">
+      <div class="field fn"><label>Họ tên</label><input data-f="n" value="${esc(c.n)}" placeholder="Tên người thật" autocomplete="off" enterkeyhint="next"><span class="ok"><svg viewBox="0 0 24 24"><path d="M5 12l5 5 9-10"/></svg></span></div>
+      <div class="field fp"><label>Điện thoại / Zalo</label><input data-f="p" value="${esc(c.p)}" placeholder="09xx xxx xxx" inputmode="tel" enterkeyhint="done"><span class="ok"><svg viewBox="0 0 24 24"><path d="M5 12l5 5 9-10"/></svg></span></div>
+      <div class="err">Số điện thoại chưa hợp lệ (VD: 0901 234 567)</div>
+     </div>
+     <div class="acts">
+      <a class="chip red" data-x="call"><svg class="i" viewBox="0 0 24 24"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/></svg>Gọi</a>
+      <a class="chip zl" data-x="zalo" target="_blank" rel="noopener">💬 Zalo</a>
+      <button class="chip" data-x="copy" aria-label="Sao chép"><svg class="i" viewBox="0 0 24 24"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>Sao chép</button>
+      <span class="sp"></span>
+      <button class="chip ask" data-x="ask">🙋 Chưa biết</button>
+      <button class="chip ghost" data-x="clear" aria-label="Xoá">Xoá</button>
+     </div>`;
+    L.appendChild(el);
+  });
+  refresh();
+}
+function refreshCard(el){
+  const k=el.dataset.k,c=S.c[k]||{},d=isDone(k),r=ROLES.find(x=>x.k===k);
+  el.classList.toggle('done',d);
+  el.classList.toggle('ask',!!c.ask&&!d);
+  el.querySelector('.tag.ak').style.display=c.ask&&!d?'':'none';
+  el.querySelector('.c-t>span').textContent=d?`${c.n.trim()} · ${c.p.trim()}`:r.d;
+  const fn=el.querySelector('.fn'),fp=el.querySelector('.fp');
+  fn.classList.toggle('good',(c.n||'').trim().length>1);
+  const pv=validPhone(c.p),bad=(c.p||'').length>5&&!pv;
+  fp.classList.toggle('good',pv);fp.classList.toggle('bad',bad);
+  el.querySelector('.err').classList.toggle('on',bad);
+  const ph=digits(c.p);
+  const call=el.querySelector('[data-x=call]'),zl=el.querySelector('[data-x=zalo]'),cp=el.querySelector('[data-x=copy]');
+  call.href='tel:'+ph;zl.href='https://zalo.me/'+zaloNum(c.p);
+  [call,zl,cp].forEach(a=>a.setAttribute('aria-disabled',!d));
+  const ab=el.querySelector('[data-x=ask]');ab.style.display=d?'none':'';ab.classList.toggle('on',!!c.ask);
+  ab.textContent=c.ask?'✓ Đã đánh dấu cần hỏi':'🙋 Chưa biết';
+}
+function refresh(){
+  const nk=nextKey();
+  document.querySelectorAll('.c').forEach(el=>{refreshCard(el);const isN=el.dataset.k===nk;el.classList.toggle('next',isN);el.querySelector('.tag.nx').style.display=isN?'':'none'});
+  const n=ROLES.filter(r=>isDone(r.k)).length,req=isDone('moa')&&isDone('adm');
+  const pb=$('#pct');const prev=+pb.dataset.n||0;pb.innerHTML=`${n}<small>/${N}</small>`;pb.dataset.n=n;
+  if(n>prev){$('#ringBox').classList.remove('bump');void $('#ringBox').offsetWidth;$('#ringBox').classList.add('bump')}
+  const ring=$('#ring');ring.style.strokeDashoffset=314.16*(1-n/N);ring.style.stroke=n===N?'var(--ok)':'var(--red)';
+  // overall % (4 đầu mối + danh bạ + ảnh + liên hệ MOA + ADM)
+  const pts=n+(S.vcf?1:0)+(S.img?1:0)+(S.called.moa?1:0)+(S.called.adm?1:0),pc=Math.round(pts/8*100);
+  $('#miniTxt').textContent=pc+'%';$('#miniFill').style.width=pc+'%';$('#miniFill').style.background=pc===100?'var(--ok)':'var(--red)';
+  // steps
+  const s1=n===N,s2=!!(S.vcf&&S.img),s3=!!(S.called.moa&&S.called.adm);
+  $('#s1').classList.toggle('ok',s1);$('#s2').classList.toggle('ok',s2);$('#s3').classList.toggle('ok',s3);
+  const cur=!s1?'s1':!s2?'s2':!s3?'s3':null;['s1','s2','s3'].forEach(id=>$('#'+id).classList.toggle('cur',id===cur));
+  $('#s1s').innerHTML=ROLES.map(r=>`<span class="sub ${isDone(r.k)?'ok':''}">${isDone(r.k)?'✓ ':''}${r.t}</span>`).join('');
+  $('#s2a').classList.toggle('ok',!!S.vcf);$('#s2a').textContent=(S.vcf?'✓ ':'📇 ')+'Đã lưu danh bạ';$('#s2b').classList.toggle('ok',!!S.img);
+  $('#s3a').classList.toggle('ok',!!S.called.moa);$('#s3b').classList.toggle('ok',!!S.called.adm);
+  $('#s3a').textContent=(S.called.moa?'✓ ':'')+'MOA';$('#s3b').textContent=(S.called.adm?'✓ ':'')+'ADM';
+  // badges
+  $('#b1').classList.toggle('on',req);$('#b2').classList.toggle('on',s1);$('#b3').classList.toggle('on',s2);$('#b4').classList.toggle('on',s3);
+  // ask panel
+  const asks=ROLES.filter(r=>(S.c[r.k]||{}).ask&&!isDone(r.k));
+  $('#askPanel').style.display=asks.length?'':'none';
+  $('#askList').innerHTML=asks.map(r=>`<span>${r.t}</span>`).join('');
+  nudge(n,req,s1,s2,s3,nk,asks);
+  // celebrations
+  if(req&&!S.cel.req){S.cel.req=1;save();setTimeout(()=>celebrate('🤝','Đã có MOA và ADM!','Bạn đã có 2 đầu mối quan trọng nhất. Tiếp tục bổ sung GAD và Phòng Huấn luyện nhé.'),450)}
+  else if(s1&&!S.cel.all){S.cel.all=1;save();setTimeout(()=>celebrate('🧭','Đủ 4 đầu mối!','Hệ thống hỗ trợ của bạn đã đầy đủ. Bước tiếp theo: lưu các số vào danh bạ điện thoại và chụp ảnh phiếu để mang theo.'),450)}
+  else if(s1&&s2&&s3&&!S.cel.fin){S.cel.fin=1;save();setTimeout(()=>celebrate('🚀','Sẵn sàng cho 90 ngày đầu!','Bạn đã hoàn thành cả 3 hành động. Khi cần hỗ trợ, hãy chủ động liên hệ đúng đầu mối.'),450)}
+}
+let lastNudge='';
+function nudge(n,req,s1,s2,s3,nk,asks){
+  let em,lb='Việc tiếp theo',tx,go,fn,done=false;
+  const name=k=>ROLES.find(r=>r.k===k).t;
+  if(nk==='moa'){em='👤';tx='Bắt đầu với MOA – Quản lý trực tiếp, người đồng hành gần nhất của bạn.';go='Điền MOA';fn=()=>focusCard('moa')}
+  else if(nk==='adm'){em='📈';tx='Tiếp theo là ADM – đầu mối Phát triển kinh doanh.';go='Điền ADM';fn=()=>focusCard('adm')}
+  else if(nk){em='✨';tx=`Còn ${N-n} đầu mối nữa. Chưa biết? Hỏi ADM / Quản lý trực tiếp ngay tại lớp.`;go='Điền '+name(nk);fn=()=>focusCard(nk)}
+  else if(!s1){em='🙋';lb='Cần hỏi thêm';tx=`Hỏi ADM / Quản lý trực tiếp để bổ sung: ${asks.map(r=>r.t).join(', ')}.`;go='Soạn tin';fn=askMsg}
+  else if(!S.vcf){em='📇';tx='Lưu các số liên hệ vào danh bạ điện thoại của bạn, xong bấm xác nhận.';go='Đã lưu danh bạ';fn=markVcf}
+  else if(!S.img){em='🖼️';tx='Tạo ảnh phiếu để mang theo bên mình suốt 90 ngày đầu.';go='Tạo ảnh phiếu';fn=exportImg}
+  else if(!S.called.moa){em='💬';tx='Chủ động kết nối: nhắn Zalo chào MOA của bạn ngay hôm nay.';go='Nhắn MOA';fn=()=>contact('moa')}
+  else if(!S.called.adm){em='💬';tx='Tiếp tục kết nối với ADM – một lời chào ngắn là đủ.';go='Nhắn ADM';fn=()=>contact('adm')}
+  else{em='🎉';lb='Hoàn thành';tx='Hệ thống hỗ trợ đã sẵn sàng. Khi cần, bắt đầu từ MOA và ADM.';go='Xem phiếu';fn=exportImg;done=true}
+  const el=$('#nudge');$('#nEm').textContent=em;$('#nLb').textContent=lb;$('#nTx').textContent=tx;
+  $('#nGo').firstChild.textContent=go+' ';$('#nGo').onclick=fn;el.classList.toggle('done',done);
+  if(tx!==lastNudge){el.classList.remove('swap');void el.offsetWidth;el.classList.add('swap');lastNudge=tx}
+}
+function focusCard(k){const el=document.querySelector(`.c[data-k="${k}"]`);if(!el)return;
+  el.scrollIntoView({behavior:'smooth',block:'center'});
+  const c=S.c[k]||{};setTimeout(()=>el.querySelector(`input[data-f="${(c.n||'').trim().length>1?'p':'n'}"]`).focus({preventScroll:true}),350)}
+function contact(k){const c=S.c[k];if(!isDone(k)){focusCard(k);return}
+  S.called[k]=1;save();refresh();window.open('https://zalo.me/'+zaloNum(c.p),'_blank','noopener')}
+
+/* ---------- Events ---------- */
+$('#list').addEventListener('input',e=>{
+  const i=e.target;if(!i.dataset.f)return;const el=i.closest('.c'),k=el.dataset.k;
+  const before=isDone(k);S.c[k]=S.c[k]||{};S.c[k][i.dataset.f]=i.value;
+  if(isDone(k))S.c[k].ask=0;save();
+  if(!before&&isDone(k)){vib(25);toast(`✓ Đã thêm ${ROLES.find(r=>r.k===k).t}`)}
+  refresh();
+});
+$('#list').addEventListener('keydown',e=>{
+  if(e.key!=='Enter')return;const i=e.target;if(!i.dataset.f)return;e.preventDefault();
+  const el=i.closest('.c');if(i.dataset.f==='n')el.querySelector('[data-f=p]').focus();
+  else{const nk=nextKey();nk&&nk!==el.dataset.k?focusCard(nk):i.blur()}
+});
+$('#list').addEventListener('click',e=>{
+  const b=e.target.closest('[data-x]');if(!b)return;const el=b.closest('.c'),k=el.dataset.k,c=S.c[k]||{},x=b.dataset.x;
+  if(x==='call'||x==='zalo'){if(k==='moa'||k==='adm'){S.called[k]=1;save();setTimeout(refresh,50)}}
+  if(x==='copy'){e.preventDefault();copy(`${c.n} – ${c.p}`).then(()=>toast('Đã sao chép số liên hệ'))}
+  if(x==='ask'){S.c[k]={...c,ask:c.ask?0:1};save();refresh();if(S.c[k].ask)toast('Đã thêm vào danh sách cần hỏi')}
+  if(x==='clear'){const bk=JSON.parse(JSON.stringify(c));delete S.c[k];save();
+    el.querySelectorAll('input').forEach(i=>i.value='');refresh();
+    toast('Đã xoá thông tin',()=>{S.c[k]=bk;save();el.querySelector('[data-f=n]').value=bk.n||'';el.querySelector('[data-f=p]').value=bk.p||'';refresh()})}
+});
+['hv','dt'].forEach(id=>{const el=$('#'+id);el.value=S[id]||(id==='dt'?new Date().toISOString().slice(0,10):'');S[id]=el.value;
+  el.addEventListener('input',()=>{S[id]=el.value;save();if(id==='hv')$('#fHv').classList.toggle('good',el.value.trim().length>1)})});
+$('#fHv').classList.toggle('good',(S.hv||'').trim().length>1);
+document.addEventListener('click',e=>{const a=e.target.closest('[data-a]');if(!a)return;({img:exportImg,vcf:markVcf,reset:resetAll,askmsg:askMsg})[a.dataset.a]()});
+
+function copy(t){if(navigator.clipboard&&isSecureContext)return navigator.clipboard.writeText(t);
+  return new Promise(r=>{const ta=document.createElement('textarea');ta.value=t;ta.style.position='fixed';ta.style.opacity=0;document.body.appendChild(ta);ta.select();try{document.execCommand('copy')}catch(_){}ta.remove();r()})}
+
+/* ---------- Ask message ---------- */
+function askMsg(){
+  const asks=ROLES.filter(r=>(S.c[r.k]||{}).ask&&!isDone(r.k));
+  const list=(asks.length?asks:ROLES.filter(r=>!isDone(r.k))).map(r=>`${r.t} (${r.d})`).join(', ')||'các đầu mối hỗ trợ';
+  const msg=`Chào anh/chị, em là ${S.hv||'...'}, Tư vấn viên mới. Anh/chị vui lòng cho em xin họ tên và số điện thoại/Zalo của: ${list}. Em cảm ơn anh/chị!`;
+  const to=['adm','moa'].find(isDone);
+  modal(`<h3>Soạn tin nhờ hỗ trợ</h3><p>Gửi cho ADM / Quản lý trực tiếp hoặc hỏi giảng viên ngay tại lớp.</p>
+   <textarea id="msg">${esc(msg)}</textarea><div style="height:14px"></div>
+   <button class="btn p" id="cpm">Sao chép tin nhắn</button>
+   ${to?`<button class="btn s" id="zlm">Sao chép & mở Zalo ${to.toUpperCase()}</button>`:''}
+   <button class="btn t" onclick="closeM()">Đóng</button>`);
+  $('#cpm').onclick=()=>copy($('#msg').value).then(()=>{toast('Đã sao chép – dán vào Zalo/SMS');closeM()});
+  if(to)$('#zlm').onclick=()=>copy($('#msg').value).then(()=>{window.open('https://zalo.me/'+zaloNum(S.c[to].p),'_blank','noopener');closeM()});
+}
+
+/* ---------- Danh bạ: học viên tự lưu, bấm xác nhận ---------- */
+function markVcf(){S.vcf=S.vcf?0:1;save();refresh();vib(25);toast(S.vcf?'📇 Đã xác nhận lưu danh bạ':'Đã bỏ xác nhận')}
+function dl(blob,name){const u=URL.createObjectURL(blob),a=document.createElement('a');a.href=u;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),1500)}
+
+/* ---------- Export image (bố cục theo Handout 2) ---------- */
+function rr(x,a,b,w,h,r){x.beginPath();x.moveTo(a+r,b);x.arcTo(a+w,b,a+w,b+h,r);x.arcTo(a+w,b+h,a,b+h,r);x.arcTo(a,b+h,a,b,r);x.arcTo(a,b,a+w,b,r);x.closePath()}
+function fitText(x,t,maxW){if(x.measureText(t).width<=maxW)return t;while(t.length&&x.measureText(t+'…').width>maxW)t=t.slice(0,-1);return t+'…'}
+function exportImg(){
+  const W=1080,H=1528,cv=document.createElement('canvas');cv.width=W;cv.height=H;const x=cv.getContext('2d');
+  const F='-apple-system,"Segoe UI",Roboto,Arial,sans-serif',RED='#ED1B2E',INK='#1F2328',G='#68737A';
+  x.fillStyle='#fff';x.fillRect(0,0,W,H);
+  // top line
+  x.font=`800 26px ${F}`;x.fillStyle=RED;x.fillText('PRU',60,70);const pw=x.measureText('PRU ').width;x.fillStyle='#373A36';x.fillText('KHỞI ĐẦU SỰ NGHIỆP',60+pw,70);
+  x.textAlign='right';x.font=`400 20px ${F}`;x.fillStyle=G;x.fillText('Tài liệu huấn luyện, lưu hành nội bộ',W-60,70);x.textAlign='left';
+  // card
+  x.save();x.shadowColor='rgba(16,24,40,.10)';x.shadowBlur=40;x.shadowOffsetY=10;x.fillStyle='#fff';rr(x,50,110,W-100,1090,36);x.fill();x.restore();
+  x.strokeStyle='#ECEEF0';x.lineWidth=2;rr(x,50,110,W-100,1090,36);x.stroke();
+  x.font=`800 22px ${F}`;x.fillStyle=RED;x.fillText('THẺ LIÊN HỆ CÁ NHÂN',100,180);
+  x.font=`800 50px ${F}`;x.fillStyle=INK;x.fillText('Hệ thống hỗ trợ ',100,245);const hw=x.measureText('Hệ thống hỗ trợ ').width;x.fillStyle=RED;x.fillText('của tôi',100+hw,245);
+  x.fillStyle=RED;rr(x,W-290,175,190,64,32);x.fill();x.fillStyle='#fff';x.font=`800 24px ${F}`;x.textAlign='center';x.fillText('90 ngày đầu',W-195,216);x.textAlign='left';
+  // name/date
+  x.fillStyle='#F4F5F7';rr(x,100,285,520,74,16);x.fill();rr(x,640,285,340,74,16);x.fill();
+  x.font=`700 15px ${F}`;x.fillStyle='#8A939B';x.fillText('TÊN TÔI',122,314);x.fillText('NGÀY NHẬN',662,314);
+  x.font=`700 26px ${F}`;x.fillStyle=INK;x.fillText(fitText(x,S.hv||'',470),122,346);
+  x.fillText(S.dt?S.dt.split('-').reverse().join('/'):'__/__/____',662,346);
+  // headers
+  x.font=`800 16px ${F}`;x.fillStyle='#8A939B';x.fillText('ĐẦU MỐI HỖ TRỢ',100,410);x.fillText('HỌ TÊN',470,410);x.textAlign='right';x.fillText('ĐIỆN THOẠI / ZALO',980,410);x.textAlign='left';
+  let y=430;
+  ROLES.forEach(r=>{const c=S.c[r.k]||{},ok=isDone(r.k);
+    x.fillStyle='#FFF1F2';rr(x,100,y,880,170,22);x.fill();
+    x.fillStyle=RED;x.fillRect(100,y+22,7,126);
+    // icon
+    x.fillStyle=ok?RED:'#fff';rr(x,130,y+50,70,70,18);x.fill();
+    x.save();x.translate(141,y+61);x.scale(2,2);x.strokeStyle=ok?'#fff':RED;x.lineWidth=1.6;x.lineCap='round';x.lineJoin='round';
+    try{const tmp=document.createElementNS('http://www.w3.org/2000/svg','path');
+      IC[r.k].match(/<(path|circle|rect)[^>]*>/g).forEach(tag=>{let p;
+        if(tag.startsWith('<path'))p=new Path2D(tag.match(/d="([^"]+)"/)[1]);
+        else if(tag.startsWith('<circle')){const g=n=>+tag.match(new RegExp(n+'="([^"]+)"'))[1];p=new Path2D();p.arc(g('cx'),g('cy'),g('r'),0,Math.PI*2)}
+        else{const g=n=>+(tag.match(new RegExp(' '+n+'="([^"]+)"'))||[,0])[1];p=new Path2D();const rx=g('rx');const X=g('x'),Y=g('y'),w=g('width'),h=g('height');
+          p.moveTo(X+rx,Y);p.arcTo(X+w,Y,X+w,Y+h,rx);p.arcTo(X+w,Y+h,X,Y+h,rx);p.arcTo(X,Y+h,X,Y,rx);p.arcTo(X,Y,X+w,Y,rx);p.closePath()}
+        x.stroke(p)})}catch(_){}
+    x.restore();
+    x.font=`800 30px ${F}`;x.fillStyle=INK;x.fillText(r.t==='Phòng Huấn luyện'?'Phòng':r.t,222,y+(r.k==='hl'?72:80));
+    if(r.k==='hl')x.fillText('Huấn luyện',222,y+106);
+    x.font=`400 19px ${F}`;x.fillStyle=G;x.fillText(r.d,222,y+(r.k==='hl'?136:116));
+    // boxes
+    x.fillStyle='#fff';x.strokeStyle='#F5A3AB';x.lineWidth=2;rr(x,460,y+40,280,90,18);x.fill();x.stroke();rr(x,760,y+40,200,90,18);x.fill();x.stroke();
+    x.font=`700 24px ${F}`;x.fillStyle=ok?INK:'#B3B9BE';x.fillText(fitText(x,ok?c.n.trim():'—',250),476,y+95);
+    x.font=`700 22px ${F}`;x.fillText(fitText(x,ok?c.p.trim():'—',176),774,y+95);
+    y+=190});
+  // actions box
+  y=1230;x.fillStyle='#FFF1F2';x.strokeStyle='#F5A3AB';x.lineWidth=2;rr(x,50,y,W-100,210,24);x.fill();x.stroke();
+  x.font=`800 22px ${F}`;x.fillStyle=RED;x.fillText('ĐỀ XUẤT HÀNH ĐỘNG',80,y+46);
+  const L=[['1.  Bổ sung đầy đủ thông tin còn thiếu – ','hỏi ADM / Quản lý trực tiếp','.'],
+           ['2.  Lưu các số liên hệ vào ','danh bạ điện thoại',' và chụp ảnh phiếu để mang theo.'],
+           ['3.  Chủ động liên hệ đúng đầu mối khi cần, ','bắt đầu từ MOA và ADM','.']];
+  L.forEach((l,i)=>{let xx=80;const yy=y+95+i*44;
+    [[l[0],'500','#373A36'],[l[1],'800',RED],[l[2],'500','#373A36']].forEach(([t,w,col])=>{x.font=`${w} 21px ${F}`;x.fillStyle=col;x.fillText(t,xx,yy);xx+=x.measureText(t).width})});
+  x.font=`800 24px ${F}`;x.fillStyle=RED;x.fillText('TIN',60,H-30);const tw=x.measureText('TIN ').width;x.fillStyle='#373A36';x.fillText('ĐỂ YÊU',60+tw,H-30);
+  const png=cv.toDataURL('image/png');
+  modal(`<h3>Phiếu hỗ trợ của bạn</h3><p>Lưu ảnh để mang theo. Trên điện thoại: nhấn giữ ảnh → Lưu ảnh.</p><img src="${png}" alt="Phiếu Hệ thống hỗ trợ của tôi">
+   <div class="row"><button class="btn p" id="dP">Tải PNG</button><button class="btn s" id="dJ">Tải JPEG</button></div>
+   <button class="btn t" onclick="closeM()">Đóng</button>`);
+  const nm='The-ho-tro-'+(S.hv||'PRU').trim().replace(/\s+/g,'-');
+  const mark=()=>{const f=!S.img;S.img=1;save();refresh();vib(25);if(f)toast('🖼️ Đã lưu ảnh phiếu')};
+  $('#dP').onclick=()=>cv.toBlob(b=>{dl(b,nm+'.png');mark()},'image/png');
+  $('#dJ').onclick=()=>cv.toBlob(b=>{dl(b,nm+'.jpg');mark()},'image/jpeg',.95);
+}
+
+/* ---------- Modal / reset / celebrate ---------- */
+function modal(h){$('#md').innerHTML=h;$('#ov').classList.add('show')}
+function closeM(){$('#ov').classList.remove('show')}
+$('#ov').addEventListener('click',e=>{if(e.target.id==='ov')closeM()});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeM()});
+function resetAll(){
+  modal(`<h3>Làm lại từ đầu?</h3><p>Toàn bộ thông tin đã nhập sẽ bị xoá khỏi thiết bị này.</p><div style="height:16px"></div>
+   <button class="btn p" id="okr">Xoá và làm lại</button><button class="btn s" onclick="closeM()">Huỷ</button>`);
+  $('#okr').onclick=()=>{storage.removeItem(KEY);storage.removeItem('pru_htht_v1');S={hv:'',dt:new Date().toISOString().slice(0,10),c:{},cel:{},called:{}};
+    $('#hv').value='';$('#dt').value=S.dt;$('#fHv').classList.remove('good');closeM();render();save();toast('Đã làm mới')};
+}
+function celebrate(e,t,m){
+  confetti();vib([20,40,20]);
+  modal(`<div class="celebrate"><span class="big">${e}</span><h3 style="margin-top:8px">${t}</h3><p>${m}</p><div style="height:18px"></div>
+   <button class="btn p" onclick="closeM();$('#nGo').click()">Làm tiếp</button><button class="btn t" onclick="closeM()">Để sau</button></div>`);
+}
+function confetti(){
+  if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+  const c=document.createElement('canvas');c.className='conf';document.body.appendChild(c);
+  const x=c.getContext('2d');c.width=innerWidth;c.height=innerHeight;
+  const col=['#ED1B2E','#373A36','#F8B4BA','#FFFFFF','#68737A'];
+  const P=Array.from({length:150},()=>({x:innerWidth/2,y:innerHeight/2.4,vx:(Math.random()-.5)*17,vy:Math.random()*-17-4,s:Math.random()*8+4,c:col[Math.random()*5|0],r:Math.random()*6,vr:(Math.random()-.5)*.3}));
+  let t=0;(function f(){x.clearRect(0,0,c.width,c.height);P.forEach(p=>{p.vy+=.45;p.x+=p.vx;p.y+=p.vy;p.vx*=.99;p.r+=p.vr;
+    x.save();x.translate(p.x,p.y);x.rotate(p.r);x.fillStyle=p.c;x.fillRect(-p.s/2,-p.s/4,p.s,p.s/2);x.restore()});
+    if(++t<160)requestAnimationFrame(f);else c.remove()})();
+}
+/* ---------- Device helpers ---------- */
+const mq=matchMedia('(max-width:900px)');
+document.addEventListener('focusin',e=>{if(mq.matches&&e.target.matches('input,textarea'))document.body.classList.add('typing')});
+document.addEventListener('focusout',()=>setTimeout(()=>{if(!document.activeElement.matches('input,textarea'))document.body.classList.remove('typing')},80));
+if(window.visualViewport){visualViewport.addEventListener('resize',()=>{const a=document.activeElement;if(a&&a.matches('input')&&mq.matches)a.scrollIntoView({block:'center',behavior:'smooth'})})}
+/* swipe down to close bottom sheet */
+(()=>{let y0=null;const md=$('#md');md.addEventListener('touchstart',e=>{if(md.scrollTop<=0)y0=e.touches[0].clientY},{passive:true});
+ md.addEventListener('touchmove',e=>{if(y0===null)return;const d=e.touches[0].clientY-y0;if(d>0){md.style.transition='none';md.style.transform=`translateY(${d}px)`}},{passive:true});
+ md.addEventListener('touchend',e=>{if(y0===null)return;const d=e.changedTouches[0].clientY-y0;md.style.transition='';md.style.transform='';y0=null;if(d>110)closeM()})})();
+/* Desktop shortcuts: Ctrl/Cmd+P = ảnh phiếu */
+document.addEventListener('keydown',e=>{if(!(e.ctrlKey||e.metaKey))return;const k=e.key.toLowerCase();
+if(k==='p'){e.preventDefault();exportImg()}});
+render();save();
+</script>
+</body>
+</html>
